@@ -1,0 +1,31 @@
+generated: '2026-07-17'
+method: searched
+source: https://github.com/ArenaX-Labs/homebrew-tap/blob/main/sai.rb
+docs: https://competesai.com
+description: >-
+  Authentication profile for ArenaX Labs surfaces. The SAI research platform
+  (competesai.com) CLI authenticates with a bearer API token obtained from
+  account settings. The open-source RLMesh gRPC protocol intentionally leaves
+  transport security and authentication out of scope (deployment concern), so it
+  declares no built-in scheme.
+summary:
+  types: [apiKey]
+  api_key_in: [cli-token]
+  oauth2_flows: []
+schemes:
+  - name: sai-api-token
+    surface: SAI Platform (competesai.com)
+    type: apiKey
+    in: token
+    mechanism: "Bearer API token: `sai auth login --token YOUR_API_TOKEN` (token from account settings)."
+    sources:
+      - https://github.com/ArenaX-Labs/homebrew-tap/blob/main/sai.rb
+      - https://github.com/ArenaX-Labs/scoop-bucket/blob/main/sai.json
+  - name: rlmesh-wire
+    surface: RLMesh gRPC protocol (rlmesh-wire-v1)
+    type: none
+    note: >-
+      The 2026.06 workflow edition explicitly does not constrain transport
+      security or authentication; those evolve freely at the deployment layer.
+    sources:
+      - https://docs.rlmesh.dev/en/v0.1.0-rc.2/compatibility/
