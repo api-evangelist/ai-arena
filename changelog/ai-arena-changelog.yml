@@ -1,0 +1,35 @@
+generated: '2026-07-17'
+method: searched
+source: https://github.com/ArenaX-Labs/rlmesh/blob/main/CHANGELOG.md
+docs: https://docs.rlmesh.dev/en/v0.1.0-rc.2/changelog/
+description: >-
+  Changelog for the RLMesh Python package (PyPI). Follows Keep a Changelog 2.0.0
+  and Semantic Versioning 2.0.0. The Rust crates are internal implementation
+  detail with no separate user stability promise.
+scheme: semver
+changelog_format: keepachangelog-2.0.0
+current_version: 0.1.0-rc.3
+entries:
+  - version: '0.1.0'
+    date: Unreleased
+    breaking: false
+    highlights:
+      - >-
+        First release: RLMesh connects models to environments across process,
+        dependency, and machine boundaries with a Gymnasium-style API.
+      - Freezes the `rlmesh-wire-v1` protocol generation and seals the `2026.06` workflow edition.
+      - >-
+        Serve Gymnasium-style environments over local or remote gRPC
+        (EnvServer, RemoteEnv, RemoteVectorEnv, `python -m rlmesh.serve`).
+      - Evaluate models locally, remote, or in a sandbox (Model, RemoteModel, SandboxModel).
+      - Tag-driven IO adapters, action chunking / batched prediction, PyTorch and JAX end to end.
+      - Isolated sandboxes, live debug viewer, eval recording to a portable bundle, client timeouts.
+  - version: '0.1.0-rc.3'
+    date: '2026-07-06'
+    breaking: false
+    additions:
+      - Grouped predicts fuse across environments when the model exposes a batched corner.
+      - "`Model.allow_fusion` (default True) opts out of fused batched forwards."
+      - Adapter advisories carry a severity tier (`info` vs `caution`).
+    fixes:
+      - Batched and chunked prediction now works in local `run()` evals, not only on the served wire path.

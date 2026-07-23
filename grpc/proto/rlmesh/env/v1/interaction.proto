@@ -1,0 +1,200 @@
+syntax = "proto3";
+
+package rlmesh.env.v1;
+
+import "rlmesh/spaces/v1/meta.proto";
+import "rlmesh/spaces/v1/value.proto";
+
+message EpisodeMetadata {
+  string episode_id = 1;
+  // Unset when the episode was reset without an explicit seed (the environment
+  // seeded itself from entropy). Present for every explicitly seeded episode,
+  // including a genuine seed of 0.
+  optional int64 seed = 2;
+  // Env-container-internal lane index within the env vector; a non-negative
+  // array offset. Load-bearing: the channel by which the (untrusted) env tells
+  // the (trusted) runtime which lane reset/completed, so the runtime can mint
+  // episode ids against (env_id, env_index). Used for runtime minting +
+  // forensics; never a model-facing routing key.
+  uint32 env_index = 3;
+  int64 step_count = 4;
+  double cumulative_reward = 5;
+  bool terminated = 6;
+  bool truncated = 7;
+  int64 start_timestamp_ns = 8;
+  int64 end_timestamp_ns = 9;
+  rlmesh.spaces.v1.MetaMap final_info = 10;
+}
+
+message ResetRequest {
+  repeated int64 seeds = 1;
+  rlmesh.spaces.v1.MetaMap options = 2;
+  // Per-call deadline in milliseconds; 0 means no timeout. Always non-negative.
+  uint64 timeout_ms = 3;
+  // Partial/subenv reset. Empty resets the whole vector for back compatibility.
+  // When non-empty, reset only these lanes; `seeds`, if present, is aligned by
+  // position. Env implementations that support partial reset honor it (gym
+  // vector envs via options["reset_mask"]); others reject with UNSUPPORTED.
+  // Lane indices are non-negative array offsets.
+  repeated uint32 env_indices = 4;
+  // Authoritative episode ids the runtime minted for the lanes this reset starts
+  // (UUIDv7). Flow DOWN to the env for logging/correlation only — the env tags
+  // its episodes with these but never mints; the runtime stays authoritative.
+  // Positional: aligns with the lanes being reset (full-width for a whole reset,
+  // or aligned to `env_indices` for a partial reset).
+  repeated string episode_ids = 5;
+}
+
+message StepRequest {
+  rlmesh.spaces.v1.SpaceValue action = 1;
+  // Per-call deadline in milliseconds; 0 means no timeout. Always non-negative.
+  uint64 timeout_ms = 2;
+  // Reserved for future subset stepping. Empty means full-width N, which is the
+  // only behavior today. Non-empty is rejected with UNSUPPORTED until subset
+  // stepping lands. When honored, batched `action` elements and these indices
+  // are aligned by position (length == len(env_indices)). Lane indices are
+  // non-negative array offsets.
+  repeated uint32 env_indices = 3;
+  // Authoritative per-lane episode ids the runtime minted (UUIDv7), full-width
+  // (one per lane). Flow DOWN for logging/correlation only — under NEXT_STEP the
+  // env tags a fresh autoreset roll with this lane's id, but never mints. The
+  // runtime stays authoritative and keys lifecycle by env_index, not by any id
+  // the env echoes back.
+  repeated string episode_ids = 4;
+}
+
+message RenderRequest {
+  // Lanes to render. Empty selects the default (whole vector). At most one
+  // lane may be requested until multi-lane render lands; more is rejected
+  // with UNSUPPORTED. Lane indices are non-negative array offsets.
+  repeated uint32 env_indices = 1;
+  // Per-call deadline in milliseconds; 0 means no timeout. Always non-negative.
+  uint64 timeout_ms = 2;
+}
+
+message CloseEnvsRequest {
+  string reason = 1;
+}
+
+// Pin the env to the runtime-selected workflow edition. A standard, required
+// part of the env Join protocol: the runtime sends it as the FIRST Join message
+// (before the first reset), mirroring the model's edition pin on
+// ResolveAdapterRequest. While a single edition exists the floor is always
+// CURRENT, so the pin is a no-op today.
+message ConfigureEnvRequest {
+  string selected_workflow_edition = 1;
+}
+
+message ConfigureEnvResponse {}
+
+message JoinRequest {
+  oneof kind {
+    ResetRequest reset = 1;
+    StepRequest step = 2;
+    RenderRequest render = 3;
+    CloseEnvsRequest close = 4;
+    // Edition pin, sent first as the standard bind step (before reset). Tag 5 is
+    // the sibling request_id scalar, so 6 is the first free arm.
+    ConfigureEnvRequest configure = 6;
+  }
+
+  // Per-message correlation id, harmonized to tag 5 across all four Join
+  // messages (env + model, request + response). 1-byte tag on the hot path.
+  string request_id = 5;
+}
+
+message ResetResponse {
+  rlmesh.spaces.v1.SpaceValue observation = 1;
+  rlmesh.spaces.v1.MetaMap infos = 2;
+}
+
+message StepResponse {
+  rlmesh.spaces.v1.SpaceValue observation = 1;
+  repeated double rewards = 2;
+  bytes terminated_mask = 3;
+  bytes truncated_mask = 4;
+  rlmesh.spaces.v1.MetaMap infos = 5;
+  repeated EpisodeMetadata completed_episodes = 6;
+  // Reserved for future partial-width responses. Empty means full-width N. When
+  // non-empty, only the k advanced lanes are returned; per-lane fields
+  // (`observation` elements, `rewards`, `terminated_mask`, `truncated_mask`)
+  // have length len(env_indices) and align by position. `completed_episodes` is
+  // not positional: it is a sparse list of lanes that completed this step, and
+  // each EpisodeMetadata carries its own env_index. Lane indices are
+  // non-negative array offsets.
+  repeated uint32 env_indices = 7;
+}
+
+// Byte encoding of a rendered frame. The implicit-0 UNSPECIFIED is the
+// historical default (PNG); concrete formats are added as additional values. A
+// reader that does not recognize a value must skip the frame, never error.
+enum RenderFormat {
+  RENDER_FORMAT_UNSPECIFIED = 0;
+  RENDER_FORMAT_PNG = 1;
+}
+
+message RenderResponse {
+  // Rendered frame bytes. `optional` distinguishes "no frame produced" from an
+  // empty frame.
+  optional bytes frame = 1;
+  // Encoding of `frame`. UNSPECIFIED is interpreted as the historical default
+  // (PNG), so existing single-format readers keep working; new formats are
+  // distinguished here rather than sniffed from the bytes.
+  RenderFormat format = 2;
+}
+
+message CloseEnvsResponse {
+  repeated EpisodeMetadata final_episodes = 1;
+}
+
+// Bands (aligned with ModelErrorCode; UNSPECIFIED and shared concepts share
+// numbers across the two enums): 0 = unspecified; 1-9 client/recoverable;
+// 10-19 fatal/internal. The bands are a labeling convention; the authoritative
+// recoverability signal is the `is_recoverable` field on EnvError, which readers
+// MUST consult rather than deriving it from the code. (Env producers keep the
+// field consistent with the bands, but the field — not the band — is the
+// contract, matching the model side where they can diverge.)
+enum EnvErrorCode {
+  ENV_ERROR_CODE_UNSPECIFIED = 0;
+  ENV_ERROR_CODE_TIMEOUT = 1;
+  ENV_ERROR_CODE_INVALID_ACTION = 2;
+  ENV_ERROR_CODE_NOT_READY = 3;
+  ENV_ERROR_CODE_BUSY = 4;
+  // The request is well-formed but names a feature this peer does not
+  // support yet (subset stepping, partial reset, multi-lane render).
+  ENV_ERROR_CODE_UNSUPPORTED = 5;
+  ENV_ERROR_CODE_INTERNAL = 10;
+  ENV_ERROR_CODE_CRASHED = 11;
+  ENV_ERROR_CODE_CANCELLED = 12;
+  ENV_ERROR_CODE_CLOSED = 13;
+}
+
+message EnvError {
+  EnvErrorCode code = 1;
+  string message = 2;
+  bool is_recoverable = 3;
+  string debug_info = 4;
+  repeated EpisodeMetadata interrupted_episodes = 5;
+}
+
+message JoinResponse {
+  oneof kind {
+    ResetResponse reset = 1;
+    StepResponse step = 2;
+    RenderResponse render = 3;
+    CloseEnvsResponse close = 4;
+    // Acks the ConfigureEnvRequest bind step. Tags 5/6 are the sibling
+    // request_id/endpoint_total_ns scalars; 7 is the first free oneof arm.
+    ConfigureEnvResponse configure = 7;
+    EnvError error = 10;
+  }
+
+  // Per-message correlation id, harmonized to tag 5 (was 21).
+  string request_id = 5;
+
+  // Hot per-step endpoint-local op duration, in nanoseconds. A bare scalar is
+  // the cheapest forward-compatible wire shape (one varint key + one varint
+  // value, no nested framing, no string), carrying per-step timing without a
+  // nested message. `optional` preserves "no timing available" vs "0 ns".
+  optional uint64 endpoint_total_ns = 6;
+}

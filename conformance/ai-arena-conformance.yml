@@ -1,0 +1,34 @@
+generated: '2026-07-17'
+method: searched
+source: https://docs.rlmesh.dev/en/v0.1.0-rc.2/compatibility/
+description: >-
+  Cross-cutting standards and interoperability contracts RLMesh conforms to.
+  Derived from the published protobuf definitions, the sealed 2026.06 workflow
+  edition spec, and the docs. No published third-party security/compliance
+  certification program (SOC 2 / ISO 27001 / PCI / HIPAA / FedRAMP) was found, so
+  no Compliance claim is asserted.
+standards:
+  - id: grpc
+    conforms: true
+    evidence: EnvService and ModelService are gRPC services (rlmesh.env.v1 / rlmesh.model.v1) over bidirectional Join streams.
+  - id: protobuf-proto3
+    conforms: true
+    evidence: All wire messages defined in proto3 under grpc/proto/rlmesh (protocol generation rlmesh-wire-v1).
+  - id: gymnasium
+    conforms: true
+    evidence: Serves Gymnasium-style environments with reset/step/render/close; documented Gymnasium compatibility.
+  - id: semver
+    conforms: true
+    evidence: Adheres to Semantic Versioning 2.0.0 (versioning policy).
+  - id: keepachangelog
+    conforms: true
+    evidence: CHANGELOG follows Keep a Changelog 2.0.0.
+  - id: dlpack
+    conforms: true
+    evidence: DLPack-native Tensor transport with zero-copy NumPy/Torch/JAX backends.
+  - id: oauth2
+    conforms: false
+    evidence: RLMesh edition explicitly does not constrain transport security or authentication; SAI CLI uses a bearer API token, not OAuth2.
+  - id: rfc9457-problem-details
+    conforms: false
+    evidence: Errors are in-band gRPC EnvError/ModelError messages, not RFC 9457 problem+json (no HTTP surface).

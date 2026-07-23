@@ -1,0 +1,39 @@
+generated: '2026-07-17'
+method: searched
+source: https://github.com/ArenaX-Labs/rlmesh/tree/main/crates/rlmesh-proto/proto
+description: >-
+  Protocol Buffer (proto3) definitions for the RLMesh model-environment wire
+  protocol (protocol generation rlmesh-wire-v1), published by ArenaX Labs. Saved
+  verbatim from the ArenaX-Labs/rlmesh repository. RLMesh connects RL models to
+  Gymnasium-style environments across process, dependency, and machine
+  boundaries over gRPC.
+protocol_generation: rlmesh-wire-v1
+proto_syntax: proto3
+license: Apache-2.0 OR MIT
+docs: https://docs.rlmesh.dev
+services:
+  - name: EnvService
+    package: rlmesh.env.v1
+    file: grpc/proto/rlmesh/env/v1/service.proto
+    rpcs:
+      - Handshake
+      - Join            # bidirectional stream (Reset/Step/Render/Close over JoinRequest/JoinResponse)
+      - Shutdown
+  - name: ModelService
+    package: rlmesh.model.v1
+    file: grpc/proto/rlmesh/model/v1/service.proto
+    rpcs:
+      - Handshake
+      - Join            # bidirectional stream (ResolveAdapter/Predict/ResetAdapter/ReleaseAdapter)
+      - Shutdown
+proto_files:
+  - grpc/proto/rlmesh/core/v1/handshake.proto
+  - grpc/proto/rlmesh/core/v1/env_contract.proto
+  - grpc/proto/rlmesh/env/v1/service.proto
+  - grpc/proto/rlmesh/env/v1/interaction.proto
+  - grpc/proto/rlmesh/model/v1/service.proto
+  - grpc/proto/rlmesh/model/v1/interaction.proto
+  - grpc/proto/rlmesh/spaces/v1/spaces.proto
+  - grpc/proto/rlmesh/spaces/v1/types.proto
+  - grpc/proto/rlmesh/spaces/v1/value.proto
+  - grpc/proto/rlmesh/spaces/v1/meta.proto

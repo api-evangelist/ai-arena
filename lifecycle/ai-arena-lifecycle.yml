@@ -1,0 +1,46 @@
+generated: '2026-07-17'
+method: searched
+source: https://docs.rlmesh.dev/en/v0.1.0-rc.2/compatibility/
+description: >-
+  Versioning, compatibility, and deprecation posture for RLMesh. The project is
+  pre-1.0 (0.x); compatibility is documented at the workflow level rather than
+  freezing every internal type. Wire compatibility is governed by a frozen
+  protocol generation (rlmesh-wire-v1) and a sealed workflow edition (2026.06).
+versioning:
+  scheme: semver
+  current: 0.1.0-rc.3
+  docs: https://docs.rlmesh.dev/en/v0.1.0-rc.2/versioning/
+  notes: >-
+    Tracks the `rlmesh` Python package on PyPI. Rust crates are internal
+    implementation detail. A 0.x minor release may break a stable API, so pin a
+    minor range for active projects.
+  protocol_generation: rlmesh-wire-v1
+  workflow_edition: '2026.06'
+deprecation:
+  policy_url: https://docs.rlmesh.dev/en/v0.1.0-rc.2/compatibility/
+  policy: >-
+    A breaking change to a stable symbol ships in a minor release with a
+    migration note in the changelog. "Stable" means the surface intended to be
+    kept and changed carefully; "Experimental" may change or disappear. A future
+    incompatible wire change mints a new protocol generation rather than mutating
+    v1; a semantic redesign mints a new workflow edition.
+  migration_notes: true
+compatibility:
+  cross_version: false
+  note: "Today peers must run the same release; cross-version acceptance is on the roadmap, not a guarantee."
+  framework_floors:
+    python: '3.10'
+    numpy: '>=1.22'
+    torch: '>=1.11'
+    jax: '>=0.4.24'
+roadmap:
+  url: https://docs.rlmesh.dev/en/v0.1.0-rc.2/compatibility/
+  milestones:
+    - "v0.1.0 — first stable release; seals 2026.06 edition and freezes rlmesh-wire-v1."
+    - "Hardening (~July 2026) — cross-version test harness, stricter protocol checks."
+    - "Forward tolerance (~late July 2026) — edition retention, dtype negotiation floor."
+    - "Second edition (~August 2026) — exercise negotiation against a real semantic change."
+    - "v1.0 (date not set) — forward-compatibility guarantees become binding."
+sla: null
+status_page: null
+deprecated_operations: []

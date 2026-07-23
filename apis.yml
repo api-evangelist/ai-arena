@@ -1,7 +1,18 @@
 aid: ai-arena
 name: AI Arena
-description: 'AI Arena is a company surfaced as a portfolio company of paradigm and added to the API Evangelist
-  network as a stub for enrichment. Sector: gaming. This profile is a lead awaiting the enrichment pipeline.'
+description: >-
+  AI Arena is a web3/AI gaming company built by ArenaX Labs, backed by Paradigm
+  and Framework Ventures. Its flagship title, AI Arena, is an Ethereum/Arbitrum-native
+  PvP fighting game where players purchase, train through imitation learning, and
+  battle characters powered by real artificial intelligence, with a native $NRN
+  (Neuron) token and an on-chain marketplace for AI models. Beyond the game,
+  ArenaX Labs ships developer infrastructure for reinforcement learning: RLMesh,
+  an open-source, Gymnasium-compatible framework that connects RL models to
+  environments across process, dependency, and machine boundaries over a gRPC
+  wire protocol (rlmesh-wire-v1), with Python and Rust SDKs; and SAI
+  (competesai.com), a gamified RL research and competition platform with its own
+  CLI. This profile was enriched by the API Evangelist pipeline from public
+  sources — GitHub, package registries, and the RLMesh documentation.
 url: https://raw.githubusercontent.com/api-evangelist/ai-arena/refs/heads/main/apis.yml
 x-type: company
 x-source: vc-portfolio
@@ -9,12 +20,32 @@ x-backed-by:
 - paradigm
 x-tier: stub
 x-tier-reason: portfolio-lead
+accessModel:
+  pricing: unknown
+  onboarding: self-serve
+  trial: false
+  try_now: false
+  public: false
+  label: Self-serve signup
+  confidence: medium
+  source:
+  - authentication
+  generated: '2026-07-22'
+  method: derived
 specificationVersion: '0.20'
 created: '2026-07-17'
 modified: '2026-07-17'
+image: https://raw.githubusercontent.com/api-evangelist/ai-arena/refs/heads/main/images/ai-arena.jpg
 tags:
 - Company
 - Gaming
+- Web3
+- Artificial Intelligence
+- Reinforcement Learning
+- Machine Learning
+- gRPC
+- SDK
+- Developer Tools
 apis: []
 maintainers:
 - FN: Kin Lane
@@ -24,3 +55,50 @@ maintainers:
 common:
 - type: Website
   url: https://aiarena.io
+- type: DeveloperPortal
+  url: https://docs.rlmesh.dev
+- type: Documentation
+  url: https://docs.rlmesh.dev
+- type: APIReference
+  url: https://docs.rlmesh.dev/en/v0.1.0-rc.2/api/
+- type: GettingStarted
+  url: https://docs.rlmesh.dev/en/v0.1.0-rc.2/quickstart/
+- type: GitHubOrganization
+  url: https://github.com/ArenaX-Labs
+- type: Blog
+  url: https://medium.com/@aiarena
+- type: Roadmap
+  url: https://docs.rlmesh.dev/en/v0.1.0-rc.2/compatibility/
+- type: Protobuf
+  url: grpc/ai-arena-grpc.yml
+- type: Packages
+  url: packages/ai-arena-packages.yml
+- type: SDKs
+  url: packages/ai-arena-packages.yml
+- type: CLI
+  url: cli/ai-arena-cli.yml
+- type: ChangeLog
+  url: changelog/ai-arena-changelog.yml
+- type: Lifecycle
+  url: lifecycle/ai-arena-lifecycle.yml
+- type: Deprecation
+  url: https://docs.rlmesh.dev/en/v0.1.0-rc.2/compatibility/
+- type: Conformance
+  url: conformance/ai-arena-conformance.yml
+- type: Conventions
+  url: conventions/ai-arena-conventions.yml
+- type: Authentication
+  url: authentication/ai-arena-authentication.yml
+- type: VulnerabilityDisclosure
+  url: security/ai-arena-vulnerability-disclosure.yml
+- type: Security
+  url: https://github.com/ArenaX-Labs/rlmesh/blob/main/SECURITY.md
+- type: DomainSecurity
+  url: security/ai-arena-domain-security.yml
+- type: LLMsTxt
+  url: llms/ai-arena-llms.txt
+x-enrichment:
+  date: '2026-07-19'
+  status: backfilled
+  pass: local-v1
+  note: backfilled from .gitignore signal + verified work evidence

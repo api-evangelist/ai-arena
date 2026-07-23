@@ -1,0 +1,70 @@
+generated: '2026-07-17'
+method: searched
+source: https://docs.rlmesh.dev/en/v0.1.0-rc.2/  (2026.06 workflow edition contract)
+description: >-
+  Cross-cutting request/response semantics for the RLMesh gRPC wire protocol,
+  captured from the sealed 2026.06 workflow-edition behavioral contract. RLMesh
+  is a bidirectional-streaming gRPC protocol (not HTTP/REST), so conventions are
+  expressed in terms of Join-stream requests rather than HTTP headers.
+authentication:
+  style: none-at-protocol-level
+  note: >-
+    The 2026.06 edition explicitly does not constrain transport security or
+    authentication (out of scope). Deployments layer their own transport
+    security. The SAI platform CLI (separate surface) authenticates with a
+    bearer API token — see authentication/ai-arena-authentication.yml.
+request_tracing:
+  field: request_id
+  note: Every request on a Join stream is answered exactly once, and each response mirrors the originating request_id, so clients demux responses by id.
+ordering:
+  guarantee: strict-arrival-order-per-stream
+  note: >-
+    Env-service requests are processed strictly in arrival order, one at a time.
+    A pipelining model service may complete requests for different env_ids in any
+    order (advertised via the rlmesh.model.concurrent_predict.v1 capability), but
+    per-env_id ordering is always preserved.
+idempotency:
+  supported: partial
+  mechanism: operation-level (not an idempotency-key retry contract)
+  note: >-
+    ResolveAdapter is an idempotent upsert that fixes an env's EnvContract.
+    Episode and env ids are UUIDv7 (never repeat), so a missed or late
+    ResetAdapter only leaks memory and can never alias a new episode. There is no
+    documented idempotency-key header for safe retry of arbitrary calls.
+versioning:
+  style: negotiated-workflow-edition + frozen-protocol-generation
+  protocol_generation: rlmesh-wire-v1
+  workflow_edition: '2026.06'
+  handshake: >-
+    Clients declare their protocol_generation and supported_workflow_editions at
+    Handshake; generation compatibility is the only handshake-level decision, and
+    the runtime reconciles the session edition as the floor across env, model, and
+    runtime.
+error_envelope:
+  shape: in-band gRPC error messages (EnvError / ModelError)
+  fields: [code, message, is_recoverable]
+  semantics: >-
+    A recoverable error leaves the session usable for further requests; a
+    non-recoverable error means the client must abandon the session. Rejected
+    actions are recoverable (InvalidAction); rejected observations are
+    non-recoverable (Internal).
+timeouts:
+  request_field: timeout_ms
+  client_options: [connect_timeout_seconds, request_timeout_seconds]
+  note: A positive timeout_ms is a server-enforced deadline; expiry produces an in-band error with code TIMEOUT.
+vectorization:
+  note: >-
+    A served environment is a fixed-width vector of num_envs sub-environments;
+    observations/actions are batched SpaceValues; rewards, terminated_mask, and
+    truncated_mask carry one entry per sub-environment in index order.
+value_conformance:
+  policy_env: RLMESH_VALIDATION_POLICY   # warn (default) | strict | off
+  note: >-
+    Out-of-bounds Box/Text values warn (reported under the rlmesh.conformance.warning
+    info key) rather than fail by default; structural problems (wrong shape, dtype,
+    arity, domain, missing key) and NaN are always rejected.
+cross_links:
+  errors: null   # no HTTP error catalog; errors are in-band gRPC EnvError/ModelError
+  lifecycle: lifecycle/ai-arena-lifecycle.yml
+  authentication: authentication/ai-arena-authentication.yml
+  grpc: grpc/ai-arena-grpc.yml

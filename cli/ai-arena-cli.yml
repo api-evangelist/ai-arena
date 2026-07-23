@@ -1,0 +1,32 @@
+generated: '2026-07-17'
+method: searched
+source: https://github.com/ArenaX-Labs/rlmesh/blob/main/crates/rlmesh-cli/README.md
+description: >-
+  ArenaX Labs ships two first-party command-line tools: the RLMesh distribution
+  CLI (`rlmesh`) bundled with the SDK, and the SAI platform CLI (`sai`) for the
+  competesai.com research platform.
+clis:
+  - name: rlmesh
+    binary: rlmesh
+    summary: Command-line entrypoint for inspecting RLMesh distributions and running support commands.
+    docs: https://docs.rlmesh.dev
+    install:
+      - cargo install rlmesh-cli --version 0.1.0
+      - python -m rlmesh   # embedded in the Python package
+    stability: "CLI commands are a supported surface intended to stabilize; today only `version` is stable."
+    commands:
+      - command: rlmesh version
+        summary: Report the commit-stamped workflow edition for distribution inspection.
+  - name: sai
+    binary: sai
+    summary: CLI tool for the SAI Platform (competesai.com).
+    homepage: https://competesai.com
+    version: 0.0.26
+    license: Proprietary
+    install:
+      - brew install ArenaX-Labs/homebrew-tap/sai
+      - "scoop bucket add arenax https://github.com/ArenaX-Labs/scoop-bucket; scoop install sai"
+    auth: "Requires an API token before use: `sai auth login --token YOUR_API_TOKEN` (token from account settings)."
+    commands:
+      - command: sai auth login --token YOUR_API_TOKEN
+        summary: Authenticate the CLI with a SAI platform API token.

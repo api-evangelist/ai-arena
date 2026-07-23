@@ -1,0 +1,39 @@
+generated: '2026-07-17'
+method: probed
+source: live probes of /.well-known/* across AI Arena / ArenaX Labs hosts
+description: >-
+  Probe of the /.well-known/ discovery surface across the company's hosts. No
+  genuine well-known documents were found. competesai.com returns HTTP 200 for
+  every path but serves its SPA index.html (Content-Type text/html) — a soft-200,
+  not a real document — so those are recorded as not-a-document. No canonical
+  WellKnown/SecurityTxt pointer is emitted.
+hosts:
+  - host: https://aiarena.io
+    documents:
+      - {path: /.well-known/security.txt, status: 308, file: null}
+      - {path: /.well-known/openid-configuration, status: 308, file: null}
+      - {path: /.well-known/oauth-authorization-server, status: 308, file: null}
+      - {path: /.well-known/api-catalog, status: 308, file: null}
+      - {path: /.well-known/ai-plugin.json, status: 308, file: null}
+  - host: https://competesai.com
+    note: "All 200s are SPA soft-200s (text/html index.html), not real documents."
+    documents:
+      - {path: /.well-known/security.txt, status: 200, soft_200: true, file: null}
+      - {path: /.well-known/openid-configuration, status: 200, soft_200: true, file: null}
+      - {path: /.well-known/oauth-authorization-server, status: 200, soft_200: true, file: null}
+      - {path: /.well-known/api-catalog, status: 200, soft_200: true, file: null}
+      - {path: /.well-known/ai-plugin.json, status: 200, soft_200: true, file: null}
+  - host: https://rlmesh.dev
+    documents:
+      - {path: /.well-known/security.txt, status: 404, file: null}
+      - {path: /.well-known/openid-configuration, status: 404, file: null}
+      - {path: /.well-known/oauth-authorization-server, status: 404, file: null}
+      - {path: /.well-known/api-catalog, status: 404, file: null}
+      - {path: /.well-known/ai-plugin.json, status: 404, file: null}
+  - host: https://docs.rlmesh.dev
+    documents:
+      - {path: /.well-known/security.txt, status: 404, file: null}
+      - {path: /.well-known/openid-configuration, status: 404, file: null}
+      - {path: /.well-known/oauth-authorization-server, status: 404, file: null}
+      - {path: /.well-known/api-catalog, status: 404, file: null}
+      - {path: /.well-known/ai-plugin.json, status: 404, file: null}

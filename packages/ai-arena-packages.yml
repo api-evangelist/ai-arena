@@ -1,0 +1,64 @@
+generated: '2026-07-17'
+method: searched
+source: https://github.com/ArenaX-Labs
+description: >-
+  First-party client libraries and CLI binaries published by ArenaX Labs. The
+  RLMesh model-environment evaluation SDK ships to PyPI (Python) and crates.io
+  (Rust); the SAI platform CLI ships via a Homebrew tap and a Scoop bucket.
+packages:
+  - language: python
+    registry: pypi
+    name: rlmesh
+    url: https://pypi.org/project/rlmesh/
+    install: pip install rlmesh
+    version: 0.1.0rc3
+    published: '2026-07-07'
+    author: ArenaX Labs, Inc.
+    license: Apache-2.0 OR MIT
+    summary: Python SDK for model-environment evaluation workflows (serves Gymnasium-style environments).
+    official: true
+  - language: python
+    registry: pypi
+    name: rlmesh
+    extras: "rlmesh[gymnasium,numpy]"
+    url: https://pypi.org/project/rlmesh/
+    install: pip install "rlmesh[gymnasium,numpy]"
+    official: true
+  - language: rust
+    registry: crates.io
+    name: rlmesh
+    url: https://crates.io/crates/rlmesh
+    install: cargo add rlmesh
+    version: 0.1.0-rc.3
+    license: MIT OR Apache-2.0
+    docs: https://docs.rs/rlmesh
+    summary: Rust bindings for model-environment evaluation (unstable Rust API).
+    official: true
+  - language: rust
+    registry: crates.io
+    name: rlmesh-cli
+    url: https://crates.io/crates/rlmesh-cli
+    install: cargo install rlmesh-cli --version 0.1.0
+    docs: https://docs.rs/rlmesh-cli
+    summary: Command-line entrypoint that publishes the `rlmesh` binary.
+    official: true
+  - language: binary
+    registry: homebrew
+    name: sai
+    tap: ArenaX-Labs/homebrew-tap
+    url: https://github.com/ArenaX-Labs/homebrew-tap
+    install: brew install ArenaX-Labs/homebrew-tap/sai
+    version: 0.0.26
+    license: Proprietary
+    summary: CLI tool for the SAI Platform (competesai.com).
+    official: true
+  - language: binary
+    registry: scoop
+    name: sai
+    bucket: ArenaX-Labs/scoop-bucket
+    url: https://github.com/ArenaX-Labs/scoop-bucket
+    install: "scoop bucket add arenax https://github.com/ArenaX-Labs/scoop-bucket; scoop install sai"
+    version: 0.0.26
+    license: Proprietary
+    summary: CLI tool for the SAI Platform (Windows).
+    official: true
