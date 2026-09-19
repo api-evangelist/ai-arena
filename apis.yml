@@ -48,6 +48,9 @@ specificationVersion: '0.23'
 created: '2026-07-17'
 modified: '2026-07-17'
 image: https://raw.githubusercontent.com/api-evangelist/ai-arena/refs/heads/main/images/ai-arena.jpg
+x-docs-platform: readthedocs
+x-docs-platform-confidence: high
+x-docs-platform-checked: 2026-09-17
 tags:
 - Company
 - Gaming
