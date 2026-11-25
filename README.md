@@ -86,9 +86,9 @@ Model Context Protocol servers that expose the API to agents.
 
 Authentication, trust centre, and vulnerability disclosure.
 
-- [Ai Arena Authentication](https://apis.io/security/ai-arena/ai-arena-authentication/)
-- [Ai Arena Domain Security](https://apis.io/security/ai-arena/ai-arena-domain-security/)
-- [Ai Arena Vulnerability Disclosure](https://apis.io/security/ai-arena/ai-arena-vulnerability-disclosure/)
+- [AI Arena Authentication](https://apis.io/security/ai-arena/ai-arena-authentication/)
+- [AI Arena Domain Security](https://apis.io/security/ai-arena/ai-arena-domain-security/)
+- [AI Arena Vulnerability Disclosure](https://apis.io/security/ai-arena/ai-arena-vulnerability-disclosure/)
 
 ## Where to find this API
 
@@ -104,18 +104,18 @@ Links to the company's own pages. This repository publishes no copy of their spe
 
 ## API Evangelist rating
 
-**Kin Score 33.7** — thin · rubric 0.25.0 · scored 2026-10-23
+**Kin Score 33.5** — thin · rubric 0.28.1 · scored 2026-11-21
 
 | Facet | Score |
 |---|---|
 | Discoverability | 58.3 |
 | Contract quality | 24.0 |
 | Contract governance | 18.2 |
-| Operational transparency | 42.1 |
+| Operational transparency | 40.5 |
 | Developer ergonomics | 66.7 |
 | Access clarity | 0.0 |
 
-**Agent readiness 30.6** — agent-ready
+**Agent readiness 29.9** — agent-ready
 
 | Agent-readiness dimension | Result |
 |---|---|
@@ -140,6 +140,10 @@ Links to the company's own pages. This repository publishes no copy of their spe
 | Agentic Commerce | — |
 | Pagination Ratio | na |
 | Operation Distinctiveness | na |
+| MCP Tool Quality | na |
+| Onboarding Descriptor | — |
+| Dns Aid Index | na |
+| Markdown Negotiation | na |
 
 **Regulatory alignment 20.9** — Horizontal (data, software, accessibility, platform)
 
